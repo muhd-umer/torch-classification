@@ -1,12 +1,9 @@
 # Torch Classification
 
-<img align="right" width="300" height="90" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/PyTorch_logo_white.svg/1024px-PyTorch_logo_white.svg.png"/>
-
-<!-- [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![PyTorch](https://img.shields.io/badge/PyTorch-1.10.0-orange.svg)](https://pytorch.org/)
-[![CIFAR-100](https://img.shields.io/badge/Dataset-CIFAR--100-green.svg)](https://www.cs.toronto.edu/~kriz/cifar.html) -->
-
-<p align="justify"> Torch Classification is a PyTorch-based image classification project that includes the implementation of a convolutional neural network (CNN) for classifying images. The project demonstrates training the model from scratch and utilizing transfer learning with pre-trained weights on the CIFAR-100 dataset. </p>
+<div style="display: flex; align-items: center;">
+  <p align="justify"> Torch Classification is a PyTorch-based image classification project that includes the implementation of a convolutional neural network (CNN) for classifying images. The project demonstrates training the model from scratch and utilizing transfer learning with pre-trained weights on the CIFAR-100 dataset. </p>
+  <img align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/PyTorch_logo_white.svg/1024px-PyTorch_logo_white.svg.png" style="margin-left: 20px; margin-bottom: 10px;"/>
+</div>
 
 
 ## Installation
