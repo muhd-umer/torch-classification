@@ -1,6 +1,6 @@
 # Torch Classification
 
-<img align="right" width="185" height="100" src="resources/pytorch.png"/>
+<img align="right" width="135" height="100" src="resources/pytorch.png"/>
 
 <!-- [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.10.0-orange.svg)](https://pytorch.org/)
