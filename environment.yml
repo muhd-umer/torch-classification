@@ -1,0 +1,21 @@
+name: torch-classification
+channels:
+    - defaults
+    - conda-forge
+dependencies:
+    - python=3.10
+    - pip
+    - cython
+    - ipython
+    - jupyter
+    - jupyterlab
+    - matplotlib
+    - pandas
+    - scikit-learn
+    - scikit-image
+    - seaborn
+    - tqdm
+    - opencv
+    - librosa
+    - scipy
+    - termcolor
