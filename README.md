@@ -45,6 +45,16 @@ To get started with this project, follow the steps below:
     pip3 install ml_collections einops torchinfo timm
     ```
 
+## Dataset
+The CIFAR-100 dataset is used for training and testing the model. The dataset can be downloaded from [here](https://www.cs.toronto.edu/~kriz/cifar.html).
+
+Or, you can use the following commands to download the dataset:
+
+```shell
+pip3 install cifar2png
+cifar2png cifar100 data/cifar100
+```
+
 ## Project Structure
 The project is structured as follows:
 

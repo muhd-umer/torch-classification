@@ -218,3 +218,4 @@ build/
 *.asv
 
 *.pth
+data/cifar100/
