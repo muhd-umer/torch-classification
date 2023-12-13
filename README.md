@@ -5,7 +5,7 @@
 [![CIFAR-100](https://img.shields.io/badge/Dataset-CIFAR--100-green.svg)](https://www.cs.toronto.edu/~kriz/cifar.html)
 
 <div style="display: flex; align-items: center; margin-bottom: 50px; margin-right: 20px;">
-  <p>Torch Classification is a PyTorch-based image classification project that includes   <img align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Pytorch_logo.png/800px-Pytorch_logo.png" alt="PyTorch Logo" height="75">
+  <p>Torch Classification is a PyTorch-based image classification project that includes   <img align="right" src="resources/pytorch.png" alt="PyTorch Logo" height="75">
 the implementation of a convolutional neural network (CNN) for classifying images. The project demonstrates training the model from scratch and utilizing transfer learning with pre-trained weights on the CIFAR-100 dataset.</p>
 </div>
 
