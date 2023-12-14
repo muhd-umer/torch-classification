@@ -35,7 +35,7 @@ from torchvision import transforms
 warnings.filterwarnings("ignore")
 
 
-def train(cfg: ml_collections.ConfigDict, rich_progress: bool = True):
+def train(cfg, accelerator, devices, rich_progress):
     # Training
     train_transform = transforms.Compose(
         [
@@ -144,9 +144,8 @@ def train(cfg: ml_collections.ConfigDict, rich_progress: bool = True):
     # Create a PyTorch Lightning trainer with the required callbacks
     if rich_progress:
         trainer = pl.Trainer(
-            accelerator="auto",
-            devices="auto",
-            strategy="auto",
+            accelerator=accelerator,
+            devices=devices,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             callbacks=[
@@ -160,9 +159,8 @@ def train(cfg: ml_collections.ConfigDict, rich_progress: bool = True):
         )
     else:
         trainer = pl.Trainer(
-            accelerator="auto",
-            devices="auto",
-            strategy="auto",
+            accelerator=accelerator,
+            devices=devices,
             max_epochs=cfg.num_epochs,
             callbacks=[
                 pl_callbacks.ModelSummary(max_depth=3),
@@ -192,6 +190,8 @@ if __name__ == "__main__":
     parser.add_argument("--num-epochs", type=int, default=cfg.num_epochs)
     parser.add_argument("--lr", type=float, default=cfg.lr)
     parser.add_argument("--rich-progress", action="store_true")
+    parser.add_argument("--accelerator", type=str, default="auto")
+    parser.add_argument("--devices", type=str, default="auto")
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
@@ -200,4 +200,6 @@ if __name__ == "__main__":
     print(cfg)
 
     # Train the model
-    train(cfg, args.rich_progress)
+    if args.devices != "auto":
+        args.devices = int(args.devices)
+    train(cfg, args.accelerator, args.devices, args.rich_progress)
