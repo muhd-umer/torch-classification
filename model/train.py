@@ -35,7 +35,7 @@ from torchvision import transforms
 warnings.filterwarnings("ignore")
 
 
-def train(cfg: ml_collections.ConfigDict):
+def train(cfg: ml_collections.ConfigDict, rich_progress: bool = True):
     # Training
     train_transform = transforms.Compose(
         [
@@ -142,23 +142,39 @@ def train(cfg: ml_collections.ConfigDict):
     model = ImageClassifier(model, cfg)
 
     # Create a PyTorch Lightning trainer with the required callbacks
-    trainer = pl.Trainer(
-        accelerator="auto",
-        devices="auto",
-        strategy="auto",
-        max_epochs=cfg.num_epochs,
-        enable_model_summary=False,
-        callbacks=[
-            pl_callbacks.RichModelSummary(max_depth=3),
-            pl_callbacks.RichProgressBar(theme=theme),
-        ],
-    )
+    if rich_progress:
+        trainer = pl.Trainer(
+            accelerator="auto",
+            devices="auto",
+            strategy="auto",
+            max_epochs=cfg.num_epochs,
+            enable_model_summary=False,
+            callbacks=[
+                pl_callbacks.RichModelSummary(max_depth=3),
+                pl_callbacks.RichProgressBar(theme=theme),
+                pl_callbacks.ModelCheckpoint(
+                    dirpath=cfg.model_dir,
+                    filename="best_model",
+                ),
+            ],
+        )
+    else:
+        trainer = pl.Trainer(
+            accelerator="auto",
+            devices="auto",
+            strategy="auto",
+            max_epochs=cfg.num_epochs,
+            callbacks=[
+                pl_callbacks.ModelSummary(max_depth=3),
+                pl_callbacks.ModelCheckpoint(
+                    dirpath=cfg.model_dir,
+                    filename="best_model",
+                ),
+            ],
+        )
 
     # Train the model
     trainer.fit(model, train_dataloader, val_dataloader)
-
-    # Save the model
-    torch.save(model.state_dict(), os.path.join(cfg.model_dir, "resnet50_ft.pth"))
 
     # Evaluate the model on the test set
     trainer.test(model, test_dataloader)
@@ -169,12 +185,13 @@ if __name__ == "__main__":
 
     # Add argument parsing with cfg overrides
     parser = argparse.ArgumentParser(description="Train a model on CIFAR100 dataset")
-    parser.add_argument("--data_dir", type=str, default=cfg.data_dir)
-    parser.add_argument("--model_dir", type=str, default=cfg.model_dir)
-    parser.add_argument("--batch_size", type=int, default=cfg.batch_size)
-    parser.add_argument("--num_workers", type=int, default=cfg.num_workers)
-    parser.add_argument("--num_epochs", type=int, default=cfg.num_epochs)
+    parser.add_argument("--data-dir", type=str, default=cfg.data_dir)
+    parser.add_argument("--model-dir", type=str, default=cfg.model_dir)
+    parser.add_argument("--batch-size", type=int, default=cfg.batch_size)
+    parser.add_argument("--num-workers", type=int, default=cfg.num_workers)
+    parser.add_argument("--num-epochs", type=int, default=cfg.num_epochs)
     parser.add_argument("--lr", type=float, default=cfg.lr)
+    parser.add_argument("--rich-progress", action="store_true")
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
@@ -183,4 +200,4 @@ if __name__ == "__main__":
     print(cfg)
 
     # Train the model
-    train(cfg)
+    train(cfg, args.rich_progress)
