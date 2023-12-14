@@ -95,7 +95,7 @@ def train(cfg, accelerator, devices, rich_progress):
             x, y = batch
             y_hat = self(x)
             loss = self.loss(y_hat, y)
-            self.log("val_loss", loss)
+            self.log("val_loss", loss, prog_bar=True)
 
             # calculate accuracy
             _, preds = torch.max(y_hat, dim=1)
@@ -116,7 +116,7 @@ def train(cfg, accelerator, devices, rich_progress):
             acc = torchmetrics.functional.accuracy(
                 preds, y, num_classes=100, task="multiclass"
             )
-            self.log("test_loss", loss)
+            self.log("test_loss", loss, prog_bar=True)
             self.log("test_acc", acc)
 
             return loss
