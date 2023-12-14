@@ -5,7 +5,6 @@ Default configuration file for Torch Classification.
 import os
 
 import ml_collections
-import torch
 
 
 def get_cifar100_config():
@@ -24,8 +23,7 @@ def get_cifar100_config():
 
     # Training
     cfg.model_dir = os.path.abspath("../weights/")
-    cfg.num_epochs = 100
+    cfg.num_epochs = 50
     cfg.lr = 0.001
-    cfg.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     return cfg
