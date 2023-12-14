@@ -220,3 +220,4 @@ build/
 *.pth
 data/cifar100/
 data/cifar-100-python/
+notebooks/lightning_logs/

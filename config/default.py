@@ -5,6 +5,7 @@ Default configuration file for Torch Classification.
 import os
 
 import ml_collections
+import torch
 
 
 def get_cifar100_config():
@@ -14,8 +15,8 @@ def get_cifar100_config():
     cfg.seed = 42
 
     # Dataset
-    cfg.data_root = os.path.abspath("../data/")
-    cfg.batch_size = 64
+    cfg.data_dir = os.path.abspath("../data/")
+    cfg.batch_size = 4
     cfg.num_workers = 4
     cfg.pin_memory = True
     cfg.num_classes = 100
@@ -23,5 +24,8 @@ def get_cifar100_config():
 
     # Training
     cfg.model_dir = os.path.abspath("../weights/")
+    cfg.num_epochs = 100
+    cfg.lr = 0.001
+    cfg.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     return cfg
