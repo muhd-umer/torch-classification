@@ -81,6 +81,7 @@ def train(
             devices=devices,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
+            check_val_every_n_epoch=5,
             callbacks=[
                 pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
@@ -98,6 +99,7 @@ def train(
             devices=devices,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
+            check_val_every_n_epoch=5,
             callbacks=[
                 pl_callbacks.ModelSummary(max_depth=3),
                 pl_callbacks.ModelCheckpoint(
