@@ -28,7 +28,7 @@ from torchinfo import summary
 
 from config import *
 from data import *
-from models import EfficientNetV2, ImageClassifier
+from models import *
 from utils import *
 
 # Common setup
@@ -74,7 +74,19 @@ def train(
     )
 
     # Create the model
-    model = EfficientNetV2(num_classes=cfg.num_classes)
+    residual_config = [
+        MBConvConfig(*layer_config)
+        for layer_config in get_structure("efficientnet_v2_m")
+    ]
+    model = EfficientNetV2(
+        residual_config,
+        1280,
+        cfg.num_classes,
+        dropout=0.1,
+        stochastic_depth=0.2,
+        block=MBConv,
+        act_layer=nn.SiLU,
+    )
 
     if os.getenv("LOCAL_RANK", "0") == "0":
         print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
@@ -105,7 +117,7 @@ def train(
             check_val_every_n_epoch=5,
             logger=wandb_logger,
             callbacks=[
-                pl_callbacks.RichModelSummary(max_depth=3),
+                # pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
@@ -124,7 +136,7 @@ def train(
             check_val_every_n_epoch=5,
             logger=wandb_logger,
             callbacks=[
-                pl_callbacks.ModelSummary(max_depth=3),
+                # pl_callbacks.ModelSummary(max_depth=3),
                 SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
