@@ -1,6 +1,9 @@
+import sys
+
 import numpy as np
 import torch
 import torchvision.transforms.v2 as v2
+from lightning.pytorch.callbacks import TQDMProgressBar
 
 
 def numpy_collate(batch):
@@ -142,3 +145,27 @@ def get_transforms(cfg):
     }
 
     return transform_dict[cfg.transform_set]
+
+
+class SimplifiedProgressBar(TQDMProgressBar):
+    """
+    Simplified progress bar for non-interactive terminals.
+    """
+
+    def init_validation_tqdm(self):
+        bar = super().init_validation_tqdm()
+        if not sys.stdout.isatty():
+            bar.disable = True
+        return bar
+
+    def init_predict_tqdm(self):
+        bar = super().init_predict_tqdm()
+        if not sys.stdout.isatty():
+            bar.disable = True
+        return bar
+
+    def init_test_tqdm(self):
+        bar = super().init_test_tqdm()
+        if not sys.stdout.isatty():
+            bar.disable = True
+        return bar

@@ -102,6 +102,7 @@ def train(
             check_val_every_n_epoch=5,
             callbacks=[
                 pl_callbacks.ModelSummary(max_depth=3),
+                SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
                     filename="best_model",

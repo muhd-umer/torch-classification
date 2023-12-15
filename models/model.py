@@ -43,7 +43,7 @@ class ImageClassifier(pl.LightningModule):
         acc = torchmetrics.functional.accuracy(
             preds, y, num_classes=100, task="multiclass"
         )
-        self.log("val_acc", acc)
+        self.log("val_acc", acc, prog_bar=True)
 
         return loss
 
@@ -56,7 +56,7 @@ class ImageClassifier(pl.LightningModule):
         acc = torchmetrics.functional.accuracy(
             preds, y, num_classes=100, task="multiclass"
         )
-        self.log("test_acc", acc)
+        self.log("test_acc", acc, prog_bar=True)
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), lr=self.cfg.lr)
