@@ -1,10 +1,28 @@
-# Standard Imports
+"""
+MIT License:
+Copyright (c) 2023 Muhammad Umer
+
+Training script for Pytorch models [Pytorch Lightning]
+
+Usage:
+    >>> python train.py --help
+    >>> python train.py --data-dir <path> --model-dir <path> --batch-size <int> --num-workers <int> --num-epochs <int> --lr <float> --rich-progress --accelerator <str> --devices <str> --weights <path> --resume --test-only
+    
+Example:
+    Use the default config:
+    >>> python train.py
+    
+    Override the config:
+    >>> python train.py --data-dir data --model-dir models --batch-size 128 --num-workers 8 --num-epochs 100 --lr 0.001 --rich-progress --accelerator gpu --devices 1 --weights models/best_model.ckpt --resume --test-only
+"""
+
 import os
 import sys
 
 sys.path.append(os.path.join(os.getcwd(), "..", "."))  # add parent dir to path
 
 import argparse
+import warnings
 from typing import Tuple
 
 import lightning as pl
@@ -16,23 +34,18 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 import torchmetrics
-from torch import nn, optim
-
-torch.set_float32_matmul_precision("medium")
-# Custom imports
-from config import *
-from data import *
-
-# Use STIX font for math plotting
-plt.rcParams["font.family"] = "STIXGeneral"
-
-import warnings
-
-import torchvision
 from termcolor import colored
+from torch import nn, optim
 from torchvision import transforms
 
+from config import *
+from data import *
+from models import EfficientNetV2
+
+# Common setup
 warnings.filterwarnings("ignore")
+torch.set_float32_matmul_precision("medium")
+plt.rcParams["font.family"] = "STIXGeneral"
 
 
 def train(
@@ -45,29 +58,7 @@ def train(
     weights=None,
 ):
     # Training
-    train_transform = transforms.Compose(
-        [
-            transforms.Resize(
-                (224, 224), interpolation=transforms.InterpolationMode.BICUBIC
-            ),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(
-                mean=[0.5071, 0.4867, 0.4408], std=[0.2675, 0.2565, 0.2761]
-            ),
-        ]
-    )
-    test_transform = transforms.Compose(
-        [
-            transforms.Resize(
-                (224, 224), interpolation=transforms.InterpolationMode.BICUBIC
-            ),
-            transforms.ToTensor(),
-            transforms.Normalize(
-                mean=[0.5071, 0.4867, 0.4408], std=[0.2675, 0.2565, 0.2761]
-            ),
-        ]
-    )
+    train_transform, test_transform = get_cifar100_transforms()
 
     train_dataloader, val_dataloader, test_dataloader = get_cifar100_loaders(
         cfg.data_dir,
@@ -142,7 +133,7 @@ def train(
     )
 
     # Create the model
-    model = timm.create_model("resnet50", pretrained=True, num_classes=100)
+    model = EfficientNetV2(num_classes=cfg.num_classes)
     model = ImageClassifier(model, cfg)
 
     # Load from checkpoint if weights are provided
