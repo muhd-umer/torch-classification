@@ -39,7 +39,7 @@ To get started with this project, follow the steps below:
     pip3 install torch torchvision torchaudio
 
     # extra packages
-    pip3 install python-box einops torchinfo timm lightning rich
+    pip3 install python-box einops torchinfo timm lightning rich wandb
     ```
 
 ## Dataset
