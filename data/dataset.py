@@ -132,27 +132,6 @@ def get_cifar100_dataset(root, train_transform=None, test_transform=None, val_si
     return train_dataset, val_dataset, test_dataset
 
 
-def get_cifar100_transforms():
-    """
-    Get transforms for CIFAR100 dataset.
-
-    Returns:
-        tuple: (train_transform, test_transform)
-    """
-    train_transform = transforms.Compose(
-        [
-            transforms.Resize((224, 224)),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-        ]
-    )
-    test_transform = transforms.Compose(
-        [transforms.Resize((224, 224)), transforms.ToTensor()]
-    )
-
-    return train_transform, test_transform
-
-
 def get_cifar100_loaders(
     root,
     batch_size=128,
