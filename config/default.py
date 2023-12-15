@@ -31,10 +31,11 @@ def get_config():
     # Model
     cfg.model_name = "efficientnetv2_rw_m"  # must be in timm.list_models()
     cfg.pretrained = True
+    cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
 
     # Training
-    cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
-    cfg.num_epochs = 50
-    cfg.lr = 0.001
+    cfg.num_epochs = 25
+    cfg.lr = 0.0005
+    cfg.weight_decay = 0.005
 
     return cfg
