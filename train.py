@@ -183,7 +183,7 @@ if __name__ == "__main__":
     yaml_cfg = cfg.to_yaml()
 
     print(colored(f"Config:", "green", attrs=["bold"]))
-    print(colored(yaml_cfg, "white"))
+    print(colored(yaml_cfg))
 
     # Train the model
     if args.devices != "auto":
