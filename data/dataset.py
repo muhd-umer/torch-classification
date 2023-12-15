@@ -9,7 +9,6 @@ import torch
 from PIL import Image
 from torch.utils.data import Dataset
 from torch.utils.data.dataset import random_split
-from torchvision import transforms
 
 
 class CIFAR100(Dataset):
@@ -134,10 +133,10 @@ def get_cifar100_dataset(root, train_transform=None, test_transform=None, val_si
 
 def get_cifar100_loaders(
     root,
+    train_transform,
+    test_transform,
     batch_size=128,
     num_workers=4,
-    train_transform=None,
-    test_transform=None,
     val_size=0.1,
     shuffle=True,
 ):
@@ -146,9 +145,9 @@ def get_cifar100_loaders(
 
     Args:
         root (string): Root directory of dataset.
-        train_transform (callable, optional): A function/transform that takes
+        train_transform (callable): A function/transform that takes
         in an PIL image and returns a transformed version.
-        test_transform (callable, optional): A function/transform that takes
+        test_transform (callable): A function/transform that takes
         in an PIL image and returns a transformed version.
         val_size (float, optional): If float, should be between 0.0 and 1.0
         and represent the proportion of the dataset to include in the validation split.
@@ -157,10 +156,6 @@ def get_cifar100_loaders(
     Returns:
         tuple: (train_dataset, val_dataset, test_dataset)
     """
-
-    # Override transforms if not provided
-    if train_transform is None or test_transform is None:
-        train_transform, test_transform = get_cifar100_transforms()
 
     train_dataset, val_dataset, test_dataset = get_cifar100_dataset(
         root, train_transform, test_transform, val_size
