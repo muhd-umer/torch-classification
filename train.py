@@ -45,6 +45,12 @@ def train(
     resume=False,
     weights=None,
 ):
+    # Logger
+    wandb_logger = pl.pytorch.loggers.WandbLogger(
+        project="torch-classification", save_dir=cfg.log_dir
+    )
+
+    # Instantiate
     train_transform, test_transform = get_transforms(cfg)
     train_dataloader, val_dataloader, test_dataloader = get_cifar100_loaders(
         cfg.data_dir,
@@ -74,6 +80,8 @@ def train(
     if weights is not None:
         model.load_state_dict(torch.load(weights)["state_dict"])
 
+    wandb_logger.watch(model, log="all", log_freq=100)
+
     # Create a PyTorch Lightning trainer with the required callbacks
     if rich_progress:
         trainer = pl.Trainer(
@@ -82,6 +90,7 @@ def train(
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
+            logger=wandb_logger,
             callbacks=[
                 pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
@@ -100,6 +109,7 @@ def train(
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
+            logger=wandb_logger,
             callbacks=[
                 pl_callbacks.ModelSummary(max_depth=3),
                 SimplifiedProgressBar(),

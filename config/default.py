@@ -10,8 +10,9 @@ from box import Box
 def get_config():
     cfg = Box()
 
-    # Set root directory
+    # Set root directories
     cfg.root_dir = os.path.abspath(".")
+    cfg.log_dir = os.path.abspath(os.path.join(cfg.root_dir, "logs"))
 
     # Misc
     cfg.seed = 42
