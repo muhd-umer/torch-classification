@@ -35,7 +35,15 @@ from torchvision import transforms
 warnings.filterwarnings("ignore")
 
 
-def train(cfg, accelerator, devices, rich_progress):
+def train(
+    cfg,
+    accelerator,
+    devices,
+    rich_progress,
+    test_mode=False,
+    resume=False,
+    weights=None,
+):
     # Training
     train_transform = transforms.Compose(
         [
@@ -109,17 +117,13 @@ def train(cfg, accelerator, devices, rich_progress):
         def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int):
             x, y = batch
             y_hat = self(x)
-            loss = self.loss(y_hat, y)
 
             # calculate accuracy
             _, preds = torch.max(y_hat, dim=1)
             acc = torchmetrics.functional.accuracy(
                 preds, y, num_classes=100, task="multiclass"
             )
-            self.log("test_loss", loss, prog_bar=True)
             self.log("test_acc", acc)
-
-            return loss
 
         def configure_optimizers(self):
             optimizer = optim.Adam(self.parameters(), lr=self.cfg.lr)
@@ -140,6 +144,10 @@ def train(cfg, accelerator, devices, rich_progress):
     # Create the model
     model = timm.create_model("resnet50", pretrained=True, num_classes=100)
     model = ImageClassifier(model, cfg)
+
+    # Load from checkpoint if weights are provided
+    if weights is not None:
+        model.load_state_dict(torch.load(weights)["state_dict"])
 
     # Create a PyTorch Lightning trainer with the required callbacks
     if rich_progress:
@@ -173,7 +181,10 @@ def train(cfg, accelerator, devices, rich_progress):
         )
 
     # Train the model
-    trainer.fit(model, train_dataloader, val_dataloader)
+    if not test_mode:
+        if resume:
+            trainer.fit(model, train_dataloader, val_dataloader, ckpt_path=weights)
+        trainer.fit(model, train_dataloader, val_dataloader)
 
     # Evaluate the model on the test set
     trainer.test(model, test_dataloader)
@@ -184,15 +195,59 @@ if __name__ == "__main__":
 
     # Add argument parsing with cfg overrides
     parser = argparse.ArgumentParser(description="Train a model on CIFAR100 dataset")
-    parser.add_argument("--data-dir", type=str, default=cfg.data_dir)
-    parser.add_argument("--model-dir", type=str, default=cfg.model_dir)
-    parser.add_argument("--batch-size", type=int, default=cfg.batch_size)
-    parser.add_argument("--num-workers", type=int, default=cfg.num_workers)
-    parser.add_argument("--num-epochs", type=int, default=cfg.num_epochs)
-    parser.add_argument("--lr", type=float, default=cfg.lr)
-    parser.add_argument("--rich-progress", action="store_true")
-    parser.add_argument("--accelerator", type=str, default="auto")
-    parser.add_argument("--devices", type=str, default="auto")
+    parser.add_argument(
+        "--data-dir", type=str, default=cfg.data_dir, help="Directory for the data"
+    )
+    parser.add_argument(
+        "--model-dir", type=str, default=cfg.model_dir, help="Directory for the model"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=cfg.batch_size, help="Batch size for training"
+    )
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        default=cfg.num_workers,
+        help="Number of workers for data loading",
+    )
+    parser.add_argument(
+        "--num-epochs",
+        type=int,
+        default=cfg.num_epochs,
+        help="Number of epochs for training",
+    )
+    parser.add_argument(
+        "--lr", type=float, default=cfg.lr, help="Learning rate for the optimizer"
+    )
+    parser.add_argument(
+        "--rich-progress", action="store_true", help="Use rich progress bar"
+    )
+    parser.add_argument(
+        "--accelerator",
+        type=str,
+        default="auto",
+        help="Accelerator type (auto, gpu, tpu, etc.)",
+    )
+    parser.add_argument(
+        "--devices",
+        type=str,
+        default="auto",
+        help="Devices to use for training (auto, cpu, gpu, etc.)",
+    )
+    parser.add_argument(
+        "--weights",
+        type=str,
+        default=None,
+        help="Path to the weights file for the model",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume training from the provided weights",
+    )
+    parser.add_argument(
+        "--test-only", action="store_true", help="Only test the model, do not train"
+    )
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
@@ -203,4 +258,20 @@ if __name__ == "__main__":
     # Train the model
     if args.devices != "auto":
         args.devices = int(args.devices)
-    train(cfg, args.accelerator, args.devices, args.rich_progress)
+    if (args.resume or args.test_only) and args.weights is None:
+        raise ValueError(
+            colored(
+                "Provide the path to the weights file using --weights",
+                "red",
+            )
+        )
+
+    train(
+        cfg,
+        args.accelerator,
+        args.devices,
+        args.rich_progress,
+        args.test_only,
+        args.resume,
+        args.weights if args.resume or args.test_only else None,
+    )
