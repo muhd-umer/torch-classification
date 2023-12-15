@@ -4,11 +4,11 @@ Default configuration file for Torch Classification.
 
 import os
 
-import ml_collections
+from box import Box
 
 
-def get_cifar100_config():
-    cfg = ml_collections.ConfigDict()
+def get_config():
+    cfg = Box()
 
     # Set root directory
     cfg.root_dir = os.path.abspath(".")
@@ -24,8 +24,8 @@ def get_cifar100_config():
     cfg.num_classes = 100
     cfg.val_size = 0.1
     cfg.img_size = 224  # desired image size, not actual image size
-    cfg.mean = (0.5071, 0.4867, 0.4408)
-    cfg.std = (0.2675, 0.2565, 0.2761)
+    cfg.mean = [0.5071, 0.4867, 0.4408]
+    cfg.std = [0.2675, 0.2565, 0.2761]
     cfg.transform_set = "default"
 
     # Model
