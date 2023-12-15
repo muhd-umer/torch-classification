@@ -76,11 +76,11 @@ def train(
 
     # Create the model
     model = timm.create_model(
-        cfg.model_name, pretrained=True, num_classes=cfg.num_classes
+        cfg.model_name_timm, pretrained=True, num_classes=cfg.num_classes
     )
 
     if os.getenv("LOCAL_RANK", "0") == "0":
-        print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
+        print(colored(f"Model: {cfg.model_name_timm}", "green", attrs=["bold"]))
         summary(
             model,
             input_size=(3, cfg.img_size, cfg.img_size),
@@ -112,7 +112,7 @@ def train(
                 pl_callbacks.RichProgressBar(theme=theme),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename="best_model",
+                    filename=f"{cfg.model_name_timm}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
@@ -131,7 +131,7 @@ def train(
                 SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename="best_model",
+                    filename=f"{cfg.model_name_timm}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),

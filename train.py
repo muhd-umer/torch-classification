@@ -75,8 +75,7 @@ def train(
 
     # Create the model
     residual_config = [
-        MBConvConfig(*layer_config)
-        for layer_config in get_structure("efficientnet_v2_m")
+        MBConvConfig(*layer_config) for layer_config in get_structure(cfg.model_name)
     ]
     model = EfficientNetV2(
         residual_config,
@@ -87,6 +86,7 @@ def train(
         block=MBConv,
         act_layer=nn.SiLU,
     )
+    efficientnet_v2_init(model)
 
     if os.getenv("LOCAL_RANK", "0") == "0":
         print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
@@ -121,7 +121,7 @@ def train(
                 pl_callbacks.RichProgressBar(theme=theme),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename="best_model",
+                    filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
@@ -140,7 +140,7 @@ def train(
                 SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename="best_model",
+                    filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),

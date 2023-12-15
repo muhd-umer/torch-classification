@@ -320,34 +320,31 @@ class EfficientNetV2(nn.Module):
 
 
 def efficientnet_v2_init(model):
+    """
+    Initialize the weights and biases of the layers in the given model.
+
+    For Conv2d layers, weights are initialized using Kaiming Normal initialization,
+    and biases are initialized to zero.
+
+    For BatchNorm2d and GroupNorm layers, weights are initialized to one,
+    and biases are initialized to zero.
+
+    For Linear layers, weights are initialized from a normal distribution with mean 0 and std 0.01,
+    and biases are initialized to zero.
+
+    Args:
+        model (torch.nn.Module): The model whose layers are to be initialized.
+    """
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight, mode="fan_out")
+            nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
             if m.bias is not None:
                 nn.init.zeros_(m.bias)
         elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
             nn.init.ones_(m.weight)
-            nn.init.zeros_(m.bias)
+            if m.bias is not None:
+                nn.init.zeros_(m.bias)
         elif isinstance(m, nn.Linear):
             nn.init.normal_(m.weight, mean=0.0, std=0.01)
-            nn.init.zeros_(m.bias)
-
-
-def get_efficientnet_v2(
-    model_name, num_classes=0, dropout=0.1, stochastic_depth=0.2, **kwargs
-):
-    residual_config = [
-        MBConvConfig(*layer_config) for layer_config in get_structure(model_name)
-    ]
-    model = EfficientNetV2(
-        residual_config,
-        1280,
-        num_classes,
-        dropout=dropout,
-        stochastic_depth=stochastic_depth,
-        block=MBConv,
-        act_layer=nn.SiLU,
-    )
-    efficientnet_v2_init(model)
-
-    return model
+            if m.bias is not None:
+                nn.init.zeros_(m.bias)

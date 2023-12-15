@@ -30,7 +30,8 @@ def get_config():
     cfg.transform_set = "default"
 
     # Model
-    cfg.model_name = "efficientnetv2_rw_m"  # must be in timm.list_models()
+    cfg.model_name = "efficientnet_v2_m"
+    cfg.model_name_timm = "efficientnetv2_rw_m"  # must be in timm.list_models()
     cfg.pretrained = True
     cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
 
