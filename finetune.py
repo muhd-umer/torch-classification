@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 import timm
 import torch
 from termcolor import colored
+from torchinfo import summary
 
 from config import *
 from data import *
@@ -77,6 +78,18 @@ def train(
     model = timm.create_model(
         cfg.model_name, pretrained=True, num_classes=cfg.num_classes
     )
+
+    if os.getenv("LOCAL_RANK", "0") == "0":
+        print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
+        summary(
+            model,
+            input_size=(3, cfg.img_size, cfg.img_size),
+            batch_dim=0,
+            verbose=1,
+            depth=2,
+            device="cpu",
+        )
+
     model = ImageClassifier(model, cfg)
 
     # Load from checkpoint if weights are provided
@@ -95,7 +108,7 @@ def train(
             check_val_every_n_epoch=5,
             logger=wandb_logger,
             callbacks=[
-                pl_callbacks.RichModelSummary(max_depth=3),
+                # pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
@@ -114,7 +127,7 @@ def train(
             check_val_every_n_epoch=5,
             logger=wandb_logger,
             callbacks=[
-                pl_callbacks.ModelSummary(max_depth=3),
+                # pl_callbacks.ModelSummary(max_depth=3),
                 SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,

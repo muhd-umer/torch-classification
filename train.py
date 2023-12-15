@@ -24,6 +24,7 @@ import lightning.pytorch.callbacks as pl_callbacks
 import matplotlib.pyplot as plt
 import torch
 from termcolor import colored
+from torchinfo import summary
 
 from config import *
 from data import *
@@ -74,6 +75,18 @@ def train(
 
     # Create the model
     model = EfficientNetV2(num_classes=cfg.num_classes)
+
+    if os.getenv("LOCAL_RANK", "0") == "0":
+        print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
+        summary(
+            model,
+            input_size=(3, cfg.img_size, cfg.img_size),
+            batch_dim=0,
+            verbose=1,
+            depth=2,
+            device="cpu",
+        )
+
     model = ImageClassifier(model, cfg)
 
     # Load from checkpoint if weights are provided
