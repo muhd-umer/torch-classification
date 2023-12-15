@@ -217,6 +217,7 @@ baseline_simulator/
 build/
 *.asv
 
+*.ckpt
 *.pth
 data/cifar100/
 data/cifar-100-python/
