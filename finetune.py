@@ -49,10 +49,10 @@ def train(
     train_transform, test_transform = get_transforms(cfg)
     train_dataloader, val_dataloader, test_dataloader = get_cifar100_loaders(
         cfg.data_dir,
-        cfg.batch_size,
-        cfg.num_workers,
         train_transform,
         test_transform,
+        cfg.batch_size,
+        cfg.num_workers,
         val_size=0.1,
     )
 
