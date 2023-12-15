@@ -193,14 +193,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
-    yaml_cfg = cfg.to_yaml()
 
-    os.makedirs(cfg.log_dir, exist_ok=True)
+    # Code to run only once
+    if os.getenv("LOCAL_RANK", "0") == "0":
+        yaml_cfg = cfg.to_yaml()
 
-    print(colored(f"Config:", "green", attrs=["bold"]))
-    print(colored(yaml_cfg))
+        os.makedirs(cfg.log_dir, exist_ok=True)
 
-    # Train the model
+        print(colored(f"Config:", "green", attrs=["bold"]))
+        print(colored(yaml_cfg))
+
     if args.devices != "auto":
         args.devices = int(args.devices)
     if (args.resume or args.test_only) and args.weights is None:

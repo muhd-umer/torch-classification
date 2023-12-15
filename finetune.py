@@ -144,10 +144,16 @@ if __name__ == "__main__":
         "--data-dir", type=str, default=cfg.data_dir, help="Directory for the data"
     )
     parser.add_argument(
-        "--model-dir", type=str, default=cfg.model_dir, help="Directory for the model"
+        "--model-dir",
+        type=str,
+        default=cfg.model_dir,
+        help="Directory for the model",
     )
     parser.add_argument(
-        "--batch-size", type=int, default=cfg.batch_size, help="Batch size for training"
+        "--batch-size",
+        type=int,
+        default=cfg.batch_size,
+        help="Batch size for training",
     )
     parser.add_argument(
         "--num-workers",
@@ -196,14 +202,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
-    yaml_cfg = cfg.to_yaml()
 
-    os.makedirs(cfg.log_dir, exist_ok=True)
+    # Code to run only once
+    if os.getenv("LOCAL_RANK", "0") == "0":
+        yaml_cfg = cfg.to_yaml()
 
-    print(colored(f"Config:", "green", attrs=["bold"]))
-    print(colored(yaml_cfg))
+        os.makedirs(cfg.log_dir, exist_ok=True)
 
-    # Train the model
+        print(colored(f"Config:", "green", attrs=["bold"]))
+        print(colored(yaml_cfg))
+
     if args.devices != "auto":
         args.devices = int(args.devices)
     if (args.resume or args.test_only) and args.weights is None:
