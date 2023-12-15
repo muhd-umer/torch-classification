@@ -198,6 +198,8 @@ if __name__ == "__main__":
     cfg.update(args.__dict__)
     yaml_cfg = cfg.to_yaml()
 
+    os.makedirs(cfg.log_dir, exist_ok=True)
+
     print(colored(f"Config:", "green", attrs=["bold"]))
     print(colored(yaml_cfg))
 
