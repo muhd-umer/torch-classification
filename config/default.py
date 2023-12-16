@@ -19,6 +19,7 @@ def get_config():
 
     # Dataset
     cfg.data_dir = os.path.abspath(os.path.join(cfg.root_dir, "data"))
+    cfg.dataset_type = "default"  # default or imagefolder
     cfg.batch_size = 4
     cfg.num_workers = 4
     cfg.pin_memory = True
