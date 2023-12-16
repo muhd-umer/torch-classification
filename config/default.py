@@ -43,7 +43,7 @@ def get_config():
     cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
 
     # Training
-    cfg.num_epochs = 40
+    cfg.num_epochs = 50
     cfg.lr = 0.0005
     cfg.weight_decay = 0.005
 
