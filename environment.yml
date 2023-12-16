@@ -19,3 +19,12 @@ dependencies:
     - librosa
     - scipy
     - termcolor
+    - pip:
+          - einops
+          - python-box
+          - timm
+          - torchinfo
+          - pytorch-lightning
+          - rich
+          - wandb
+          - rawpy
