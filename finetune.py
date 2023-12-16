@@ -17,6 +17,7 @@ Example:
 """
 
 import argparse
+import os
 import warnings
 
 import lightning as pl
@@ -27,10 +28,10 @@ import torch
 from termcolor import colored
 from torchinfo import summary
 
-from config import *
-from data import *
+from config import get_config
+from data import get_cifar100_loaders
 from models import ImageClassifier
-from utils import *
+from utils import EMACallback, SimplifiedProgressBar, get_transforms
 
 # Common setup
 warnings.filterwarnings("ignore")
@@ -46,11 +47,22 @@ def train(
     test_mode=False,
     resume=False,
     weights=None,
+    logger_backend="tensorboard",
 ):
-    # Logger
-    wandb_logger = pl.pytorch.loggers.WandbLogger(
-        project="torch-classification", save_dir=cfg.log_dir
-    )
+    if logger_backend == "tensorboard":
+        logger = pl.pytorch.loggers.TensorBoardLogger(save_dir=cfg.log_dir, name=".")
+
+    elif logger_backend == "wandb":
+        logger = pl.pytorch.loggers.WandbLogger(
+            project="torch-classification", save_dir=cfg.log_dir
+        )
+    else:
+        raise ValueError(
+            colored(
+                "Provide a valid logger (tensorboard, wandb)",
+                "red",
+            )
+        )
 
     # Instantiate
     train_transform, test_transform = get_transforms(cfg)
@@ -61,17 +73,6 @@ def train(
         cfg.batch_size,
         cfg.num_workers,
         val_size=0.1,
-    )
-
-    theme = pl_callbacks.progress.rich_progress.RichProgressBarTheme(
-        description="black",
-        progress_bar="cyan",
-        progress_bar_finished="green",
-        progress_bar_pulse="#6206E0",
-        batch_progress="cyan",
-        time="grey82",
-        processing_speed="grey82",
-        metrics="black",
     )
 
     # Create the model
@@ -96,23 +97,34 @@ def train(
     if weights is not None:
         model.load_state_dict(torch.load(weights)["state_dict"])
 
-    wandb_logger.watch(model, log="all", log_freq=100)
+    if logger_backend == "wandb":
+        logger.watch(model, log="all", log_freq=100)
 
     # Create a PyTorch Lightning trainer with the required callbacks
     if rich_progress:
+        theme = pl_callbacks.progress.rich_progress.RichProgressBarTheme(
+            description="black",
+            progress_bar="cyan",
+            progress_bar_finished="green",
+            progress_bar_pulse="#6206E0",
+            batch_progress="cyan",
+            time="grey82",
+            processing_speed="grey82",
+            metrics="black",
+        )
         trainer = pl.Trainer(
             accelerator=accelerator,
             devices=devices,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
-            logger=wandb_logger,
+            logger=logger,
             callbacks=[
                 # pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename=f"{cfg.model_name_timm}_best_model",
+                    filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
@@ -125,13 +137,13 @@ def train(
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
-            logger=wandb_logger,
+            logger=logger,
             callbacks=[
                 # pl_callbacks.ModelSummary(max_depth=3),
                 SimplifiedProgressBar(),
                 pl_callbacks.ModelCheckpoint(
                     dirpath=cfg.model_dir,
-                    filename=f"{cfg.model_name_timm}_best_model",
+                    filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
@@ -157,16 +169,10 @@ if __name__ == "__main__":
         "--data-dir", type=str, default=cfg.data_dir, help="Directory for the data"
     )
     parser.add_argument(
-        "--model-dir",
-        type=str,
-        default=cfg.model_dir,
-        help="Directory for the model",
+        "--model-dir", type=str, default=cfg.model_dir, help="Directory for the model"
     )
     parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=cfg.batch_size,
-        help="Batch size for training",
+        "--batch-size", type=int, default=cfg.batch_size, help="Batch size for training"
     )
     parser.add_argument(
         "--num-workers",
@@ -212,6 +218,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--test-only", action="store_true", help="Only test the model, do not train"
     )
+    parser.add_argument(
+        "--logger-backend",
+        type=str,
+        default="tensorboard",
+        help="Logger backend (tensorboard, wandb)",
+    )
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
@@ -243,4 +255,5 @@ if __name__ == "__main__":
         args.test_only,
         args.resume,
         args.weights if args.resume or args.test_only else None,
+        args.logger_backend,
     )
