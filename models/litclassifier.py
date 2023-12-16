@@ -61,5 +61,10 @@ class ImageClassifier(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), lr=self.cfg.lr)
-        scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
+        scheduler = lr_scheduler.OneCycleLR(
+            optimizer,
+            max_lr=self.cfg.lr,
+            epochs=self.cfg.num_epochs,
+            steps_per_epoch=self.cfg.steps_per_epoch,
+        )
         return {"optimizer": optimizer, "lr_scheduler": scheduler}
