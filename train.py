@@ -80,6 +80,7 @@ def train(
         cfg.batch_size,
         cfg.num_workers,
         val_size=0.1,
+        dataset_type=cfg.dataset_type,
     )
 
     # Create the model
@@ -192,6 +193,12 @@ if __name__ == "__main__":
         "--batch-size", type=int, default=cfg.batch_size, help="Batch size for training"
     )
     parser.add_argument(
+        "--dataset-type",
+        type=str,
+        default=cfg.dataset_type,
+        help="Dataset type (default, imagefolder)",
+    )
+    parser.add_argument(
         "--num-workers",
         type=int,
         default=cfg.num_workers,
@@ -244,6 +251,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
+
+    if cfg.dataset_type == "default":
+        cfg.mean = [0.5071, 0.4867, 0.4408]
+        cfg.std = [0.2675, 0.2565, 0.2761]
+    elif cfg.dataset_type == "imagefolder":
+        cfg.mean = [0.5081, 0.4843, 0.4414]
+        cfg.std = [0.2888, 0.2726, 0.2962]
+    else:
+        raise ValueError(
+            colored(
+                "Provide a valid dataset type (default, imagefolder)",
+                "red",
+            )
+        )
 
     # Code to run only once
     if os.getenv("LOCAL_RANK", "0") == "0":
