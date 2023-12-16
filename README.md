@@ -67,7 +67,8 @@ cifar2png cifar100 data/cifar100
 We also offer a super-resolution variant of the CIFAR-100 dataset, which has been upscaled to `128x128` resolution using [BSRGAN 4x](https://github.com/cszn/BSRGAN). You can download this dataset from the [Weights & Data](https://github.com/muhd-umer/torch-classification/releases/tag/v0.0.1) section. Or, you can use the following commands to download the dataset:
 
 ```shell
-wget -O data/BSRGAN_4x_cifar100.zip "https://github.com/muhd-umer/torch-classification/releases/download/v0.0.1/BSRGAN_4x_cifar100.zip"
+wget -O data/BSRGAN_4x_cifar100.zip \
+    "https://github.com/muhd-umer/torch-classification/releases/download/v0.0.1/BSRGAN_4x_cifar100.zip"
 
 # unzip the dataset
 unzip -q data/BSRGAN_4x_cifar100.zip -d data/
