@@ -176,6 +176,7 @@ def get_cifar100_loaders(
     val_size=0.1,
     shuffle=True,
     dataset_type="default",
+    return_steps=False,
 ):
     """
     Get CIFAR100 dataset.
@@ -189,6 +190,7 @@ def get_cifar100_loaders(
         val_size (float, optional): If float, should be between 0.0 and 1.0
         and represent the proportion of the dataset to include in the validation split.
         shuffle (bool, optional): If True, the data will be split randomly.
+        return_steps (bool, optional): If True, return number of steps per epoch.
 
     Returns:
         tuple: (train_dataset, val_dataset, test_dataset)
@@ -227,4 +229,8 @@ def get_cifar100_loaders(
         pin_memory=True,
     )
 
-    return train_loader, val_loader, test_loader
+    if return_steps:
+        steps_per_epoch = len(train_dataset) // batch_size
+        return train_loader, val_loader, test_loader, steps_per_epoch
+    else:
+        return train_loader, val_loader, test_loader
