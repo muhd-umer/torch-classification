@@ -9,6 +9,7 @@ import torch
 from PIL import Image
 from torch.utils.data import Dataset
 from torch.utils.data.dataset import random_split
+from torchvision.datasets import ImageFolder
 
 
 class CIFAR100(Dataset):
@@ -103,6 +104,41 @@ class CIFAR100(Dataset):
             return entry
 
 
+def get_imagefolder_dataset(
+    root, train_transform=None, test_transform=None, val_size=0.1
+):
+    """
+    Get ImageFolder dataset.
+
+    Args:
+        root (string): Root directory of dataset.
+        train_transform (callable, optional): A function/transform that takes
+        in an PIL image and returns a transformed version.
+        test_transform (callable, optional): A function/transform that takes
+        in an PIL image and returns a transformed version.
+        val_size (float, optional): If float, should be between 0.0 and 1.0
+        and represent the proportion of the dataset to include in the validation split.
+    Returns:
+        tuple: (train_dataset, val_dataset, test_dataset)
+    """
+
+    # Assuming that images are organized as follows:
+    # root/train/class_x/xxx.ext
+    # root/test/class_x/xxx.ext
+
+    train_dataset = ImageFolder(os.path.join(root, "train"), transform=train_transform)
+    test_dataset = ImageFolder(os.path.join(root, "test"), transform=test_transform)
+
+    if val_size > 0.0:
+        val_size = int(len(train_dataset) * val_size)
+        train_size = len(train_dataset) - val_size
+        train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size])
+    else:
+        val_dataset = None
+
+    return train_dataset, val_dataset, test_dataset
+
+
 def get_cifar100_dataset(root, train_transform=None, test_transform=None, val_size=0.1):
     """
     Get CIFAR100 dataset.
@@ -139,6 +175,7 @@ def get_cifar100_loaders(
     num_workers=4,
     val_size=0.1,
     shuffle=True,
+    dataset_type="default",
 ):
     """
     Get CIFAR100 dataset.
@@ -157,9 +194,16 @@ def get_cifar100_loaders(
         tuple: (train_dataset, val_dataset, test_dataset)
     """
 
-    train_dataset, val_dataset, test_dataset = get_cifar100_dataset(
-        root, train_transform, test_transform, val_size
-    )
+    if dataset_type == "default":
+        train_dataset, val_dataset, test_dataset = get_cifar100_dataset(
+            root, train_transform, test_transform, val_size
+        )
+    elif dataset_type == "imagefolder":
+        train_dataset, val_dataset, test_dataset = get_imagefolder_dataset(
+            root, train_transform, test_transform, val_size
+        )
+    else:
+        raise ValueError("Invalid dataset type. Choose from [default, imagefolder].")
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
