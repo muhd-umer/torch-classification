@@ -78,6 +78,32 @@ wget -O data/BSRGAN_4x_cifar100.zip \
 unzip -q data/BSRGAN_4x_cifar100.zip -d data/
 ```
 
+## Usage
+To train the model from scratch, run the following command:
+
+```shell
+# train the model from scratch using default config
+python3 train.py
+
+# train the model from scratch using overrides
+python3 train.py --data-dir DATA_DIR \  # directory containing data
+                 --model-dir MODEL_DIR \  # directory to save model
+                 --batch-size BATCH_SIZE \  # batch size
+                 --dataset-type DATASET_TYPE \  # (default, imagefolder)
+                 --num-workers NUM_WORKERS \  # number of workers
+                 --num-epochs NUM_EPOCHS \  # number of epochs
+                 --lr LR \  # learning rate
+                 --rich-progress \  # use rich progress bar
+                 --accelerator ACCELERATOR \  # type of accelerator
+                 --devices DEVICES \  # number of devices
+                 --weights WEIGHTS \  # path to weights file
+                 --resume \  # resume training from checkpoint
+                 --test-only \  # test the model on test set
+                 --logger-backend LOGGER_BACKEND  # (wandb, tensorboard)
+```
+
+To train the model using transfer learning, replace `train.py` with `finetune.py` in the above commands.
+
 ## Project Structure
 The project is structured as follows:
 
