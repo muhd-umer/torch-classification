@@ -1,3 +1,3 @@
-from .efficientnet_v2 import *
+from .litclassifier import *
 from .model import *
-from .structure import *
+from .struct import *

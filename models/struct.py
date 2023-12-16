@@ -19,6 +19,8 @@ The tuple contains the following values:
 - fused: fused_conv
 """
 
+import torch.nn as nn
+
 efficientnet_v2_structures = {
     "efficientnet_v2_s": [
         # e k  s  in  out xN  se   fused
@@ -60,6 +62,57 @@ efficientnet_v2_structures = {
         (6, 3, 1, 512, 640, 8, True, False),
     ],
 }
+
+
+class MBConvConfig:
+    """
+    This class represents the configuration for an EfficientNet building block.
+
+    Args:
+        expand_ratio (float): Expansion ratio for the hidden layer size.
+        kernel (int): Size of the convolving kernel.
+        stride (int): Stride of the convolution.
+        in_ch (int): Number of input channels.
+        out_ch (int): Number of output channels.
+        layers (int): Number of layers.
+        use_se (bool): Whether to use Squeeze-Excitation Unit.
+        fused (bool): Whether to use fused convolution.
+        act (nn.Module, optional): Activation function. Defaults to nn.SiLU.
+        norm_layer (nn.Module, optional): Normalization layer. Defaults to nn.BatchNorm2d.
+    """
+
+    def __init__(
+        self,
+        expand_ratio: float,
+        kernel: int,
+        stride: int,
+        in_ch: int,
+        out_ch: int,
+        layers: int,
+        use_se: bool,
+        fused: bool,
+        act=nn.SiLU,
+        norm_layer=nn.BatchNorm2d,
+    ):
+        self.expand_ratio = expand_ratio
+        self.kernel = kernel
+        self.stride = stride
+        self.in_ch = in_ch
+        self.out_ch = out_ch
+        self.num_layers = layers
+        self.act = act
+        self.norm_layer = norm_layer
+        self.use_se = use_se
+        self.fused = fused
+
+    @staticmethod
+    def adjust_channels(channel, factor, divisible=8):
+        new_channel = channel * factor
+        divisible_channel = max(
+            divisible, (int(new_channel + divisible / 2) // divisible) * divisible
+        )
+        divisible_channel += divisible if divisible_channel < 0.9 * new_channel else 0
+        return divisible_channel
 
 
 def get_structure(model_name):
