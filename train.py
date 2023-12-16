@@ -134,7 +134,8 @@ def train(
 
         print(colored(f"Config:", "green", attrs=["bold"]))
         print(colored(yaml_cfg))
-        print(colored(f"Model: {cfg.model_name_timm}", "green", attrs=["bold"]))
+        model_title = cfg.model_name_timm if mode == "finetune" else cfg.model_name
+        print(colored(f"Model: {model_title}", "green", attrs=["bold"]))
         summary(
             model,
             input_size=(3, cfg.img_size, cfg.img_size),
