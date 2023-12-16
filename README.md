@@ -9,19 +9,19 @@ To get started with this project, follow the steps below:
 
 - Clone the repository to your local machine using the following command:
 
-    ```shell
+    ```fish
     git clone https://github.com/muhd-umer/torch-classification.git
     ```
 
 - It is recommended to create a new virtual environment so that updates/downgrades of packages do not break other projects. To create a new virtual environment, run the following command:
 
-    ```shell
+    ```fish
     conda env create -f environment.yml
     ```
 
 - Alternatively, you can use `mamba` (faster than conda) package manager to create a new virtual environment:
 
-    ```shell
+    ```fish
     wget -O miniforge.sh \
          "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
     bash miniforge.sh -b -p "${HOME}/conda"
@@ -37,13 +37,13 @@ To get started with this project, follow the steps below:
 
 - Activate the newly created environment:
 
-    ```shell
+    ```fish
     conda activate aecc
     ```
 
 - Install the PyTorch Ecosystem:
 
-    ```shell
+    ```fish
     # pip will take care of necessary CUDA packages
     pip3 install torch torchvision torchaudio
 
@@ -57,7 +57,7 @@ The CIFAR-100 dataset is used for training and testing the model. The dataset ca
 
 Or, you can use the following commands to download the dataset:
 
-```shell
+```fish
 # download as python pickle
 cd data
 curl -O https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
@@ -70,7 +70,7 @@ cifar2png cifar100 data/cifar100
 
 We also offer a super-resolution variant of the CIFAR-100 dataset, which has been upscaled to `128x128` resolution using [BSRGAN 4x](https://github.com/cszn/BSRGAN). You can download this dataset from the [Weights & Data](https://github.com/muhd-umer/torch-classification/releases/tag/v0.0.1) section. Or, you can use the following commands to download the dataset:
 
-```shell
+```fish
 wget -O data/BSRGAN_4x_cifar100.zip \
     "https://github.com/muhd-umer/torch-classification/releases/download/v0.0.1/BSRGAN_4x_cifar100.zip"
 
@@ -81,7 +81,7 @@ unzip -q data/BSRGAN_4x_cifar100.zip -d data/
 ## Usage
 To train the model from scratch, run the following command:
 
-```shell
+```fish  
 # train the model from scratch using default config
 python3 train.py
 
@@ -107,7 +107,7 @@ To train the model using transfer learning, replace `train.py` with `finetune.py
 ## Project Structure
 The project is structured as follows:
 
-```shell
+```fish
 torch-classification
 ├── data/            # data directory
 ├── models/          # model directory
