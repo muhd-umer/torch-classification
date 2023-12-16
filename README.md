@@ -86,7 +86,8 @@ To train the model from scratch, run the following command:
 python3 train.py
 
 # train the model from scratch using overrides
-python3 train.py --data-dir DATA_DIR \  # directory containing data
+python3 train.py --mode MODE \  # (train, finetune)
+                 --data-dir DATA_DIR \  # directory containing data
                  --model-dir MODEL_DIR \  # directory to save model
                  --batch-size BATCH_SIZE \  # batch size
                  --dataset-type DATASET_TYPE \  # (default, imagefolder)
