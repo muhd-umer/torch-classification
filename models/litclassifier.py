@@ -4,6 +4,7 @@ Copyright (c) 2023 Muhammad Umer
 
 Image classification model
 """
+
 from typing import Tuple
 
 import lightning as pl

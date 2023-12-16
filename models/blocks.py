@@ -5,6 +5,7 @@ Copyright (c) 2023 Muhammad Umer
 Architecture of the model
 """
 
+from collections import OrderedDict
 from functools import partial
 from typing import Type
 
@@ -124,3 +125,49 @@ class StochasticDepth(nn.Module):
             return x * torch.bernoulli(
                 torch.empty(shape, device=x.device), self.survival
             ).div_(self.survival)
+
+
+class MBConv(nn.Module):
+    """
+    This class represents the main building blocks of EfficientNet.
+
+    Args:
+        c (MBConvConfig): Configuration of the MBConv block.
+        sd_prob (float, optional): Stochastic depth probability. Defaults to 0.0.
+    """
+
+    def __init__(self, c, sd_prob=0.0):
+        super(MBConv, self).__init__()
+        inter_channel = c.adjust_channels(c.in_ch, c.expand_ratio)
+        block = []
+
+        # fmt: off
+        if c.expand_ratio == 1 or c.fused:
+            block.append(("fused", ConvBNAct(c.in_ch, inter_channel, c.kernel,
+                                             c.stride, 1, c.norm_layer, c.act)))
+            if c.fused:
+                block.append(("fused_point_wise",
+                              ConvBNAct(inter_channel, c.out_ch,
+                                        1, 1, 1, c.norm_layer, nn.Identity)))
+        else:
+            block.extend([
+                ("linear_bottleneck", ConvBNAct(c.in_ch, inter_channel,
+                                                1, 1, 1, c.norm_layer, c.act)),
+                ("depth_wise", ConvBNAct(inter_channel, inter_channel,
+                                         c.kernel, c.stride, inter_channel,
+                                         c.norm_layer, c.act)),
+                ("se", SEUnit(inter_channel, 4 * c.expand_ratio)),
+                ("point_wise", ConvBNAct(inter_channel, c.out_ch,
+                                         1, 1, 1, c.norm_layer, nn.Identity))
+            ])
+        # fmt: on
+
+        self.block = nn.Sequential(OrderedDict(block))
+        self.use_skip_connection = c.stride == 1 and c.in_ch == c.out_ch
+        self.stochastic_path = StochasticDepth(sd_prob, "row")
+
+    def forward(self, x):
+        out = self.block(x)
+        if self.use_skip_connection:
+            out = x + self.stochastic_path(out)
+        return out
