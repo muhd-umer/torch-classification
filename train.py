@@ -23,6 +23,7 @@ import warnings
 import lightning as pl
 import lightning.pytorch.callbacks as pl_callbacks
 import matplotlib.pyplot as plt
+import timm
 import torch
 import torch.nn as nn
 from termcolor import colored
@@ -47,6 +48,7 @@ plt.rcParams["font.family"] = "STIXGeneral"
 
 
 def train(
+    mode,
     cfg,
     accelerator,
     devices,
@@ -73,7 +75,12 @@ def train(
 
     # Instantiate
     train_transform, test_transform = get_transforms(cfg)
-    train_dataloader, val_dataloader, test_dataloader = get_cifar100_loaders(
+    (
+        train_dataloader,
+        val_dataloader,
+        test_dataloader,
+        steps_per_epoch,
+    ) = get_cifar100_loaders(
         cfg.data_dir,
         train_transform,
         test_transform,
@@ -81,31 +88,58 @@ def train(
         cfg.num_workers,
         val_size=0.1,
         dataset_type=cfg.dataset_type,
+        return_steps=True,
     )
 
-    # Create the model
-    residual_config = [
-        MBConvConfig(*layer_config) for layer_config in get_structure(cfg.model_name)
-    ]
-    model = EfficientNetV2(
-        residual_config,
-        1280,
-        cfg.num_classes,
-        dropout=0.1,
-        stochastic_depth=0.2,
-        block=MBConv,
-        act_layer=nn.SiLU,
-    )
-    efficientnet_v2_init(model)
+    # Divide steps per epoch by number of GPUs
+    if devices != "auto":
+        steps_per_epoch = steps_per_epoch // devices
+
+    cfg.steps_per_epoch = steps_per_epoch
+
+    if mode == "finetune":
+        # Create the model
+        model = timm.create_model(
+            cfg.model_name_timm, pretrained=True, num_classes=cfg.num_classes
+        )
+
+    elif mode == "train":
+        # Create the model
+        residual_config = [
+            MBConvConfig(*layer_config)
+            for layer_config in get_structure(cfg.model_name)
+        ]
+        model = EfficientNetV2(
+            residual_config,
+            1280,
+            cfg.num_classes,
+            dropout=0.1,
+            stochastic_depth=0.2,
+            block=MBConv,
+            act_layer=nn.SiLU,
+        )
+        efficientnet_v2_init(model)
+    else:
+        raise ValueError(
+            colored(
+                "Provide a valid mode (train, finetune)",
+                "red",
+            )
+        )
 
     if os.getenv("LOCAL_RANK", "0") == "0":
-        print(colored(f"Model: {cfg.model_name}", "green", attrs=["bold"]))
+        yaml_cfg = cfg.to_yaml()
+
+        os.makedirs(cfg.log_dir, exist_ok=True)
+
+        print(colored(f"Config:", "green", attrs=["bold"]))
+        print(colored(yaml_cfg))
+        print(colored(f"Model: {cfg.model_name_timm}", "green", attrs=["bold"]))
         summary(
             model,
             input_size=(3, cfg.img_size, cfg.img_size),
+            depth=1,
             batch_dim=0,
-            verbose=1,
-            depth=2,
             device="cpu",
         )
 
@@ -133,6 +167,7 @@ def train(
         trainer = pl.Trainer(
             accelerator=accelerator,
             devices=devices,
+            precision=16,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
@@ -152,6 +187,7 @@ def train(
         trainer = pl.Trainer(
             accelerator=accelerator,
             devices=devices,
+            precision=16,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
@@ -183,6 +219,7 @@ if __name__ == "__main__":
 
     # Add argument parsing with cfg overrides
     parser = argparse.ArgumentParser(description="Train a model on CIFAR100 dataset")
+    parser.add_argument("--mode", type=str, help="Training mode (train, finetune)")
     parser.add_argument(
         "--data-dir", type=str, default=cfg.data_dir, help="Directory for the data"
     )
@@ -266,15 +303,6 @@ if __name__ == "__main__":
             )
         )
 
-    # Code to run only once
-    if os.getenv("LOCAL_RANK", "0") == "0":
-        yaml_cfg = cfg.to_yaml()
-
-        os.makedirs(cfg.log_dir, exist_ok=True)
-
-        print(colored(f"Config:", "green", attrs=["bold"]))
-        print(colored(yaml_cfg))
-
     if args.devices != "auto":
         args.devices = int(args.devices)
     if (args.resume or args.test_only) and args.weights is None:
@@ -286,6 +314,7 @@ if __name__ == "__main__":
         )
 
     train(
+        args.mode,
         cfg,
         args.accelerator,
         args.devices,
