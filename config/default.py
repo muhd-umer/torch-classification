@@ -26,7 +26,7 @@ def get_config():
     cfg.num_classes = 100
     cfg.val_size = 0.1
     cfg.img_size = 224  # desired image size, not actual image size
-    cfg.transform_set = "defaults"  # imagenet, cifar10, svhn, default
+    cfg.transform_set = "default"  # imagenet, cifar10, svhn, default
 
     # CIFAR-100 Original
     # Mean: tensor([0.5071, 0.4867, 0.4408])
