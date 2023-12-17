@@ -237,6 +237,12 @@ if __name__ == "__main__":
         help="Dataset type (default, imagefolder)",
     )
     parser.add_argument(
+        "--transform-set",
+        type=str,
+        default=cfg.transform_set,
+        help="Transform set (imagenet, cifar10, svhn, default)",
+    )
+    parser.add_argument(
         "--num-workers",
         type=int,
         default=cfg.num_workers,
@@ -289,6 +295,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cfg.update(args.__dict__)
+
+    if cfg.transform_set not in ["imagenet", "cifar10", "svhn", "default"]:
+        raise ValueError(
+            colored(
+                "Provide a valid transform set (imagenet, cifar10, svhn, default)",
+                "red",
+            )
+        )
 
     if cfg.dataset_type == "default":
         cfg.mean = [0.5071, 0.4867, 0.4408]
