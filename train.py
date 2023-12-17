@@ -240,7 +240,7 @@ if __name__ == "__main__":
         "--transform-set",
         type=str,
         default=cfg.transform_set,
-        help="Transform set (imagenet, cifar10, svhn, default)",
+        help="Transform set (imagenet, cifar, svhn, default)",
     )
     parser.add_argument(
         "--num-workers",
@@ -296,10 +296,10 @@ if __name__ == "__main__":
 
     cfg.update(args.__dict__)
 
-    if cfg.transform_set not in ["imagenet", "cifar10", "svhn", "default"]:
+    if cfg.transform_set not in ["imagenet", "cifar", "svhn", "default"]:
         raise ValueError(
             colored(
-                "Provide a valid transform set (imagenet, cifar10, svhn, default)",
+                "Provide a valid transform set (imagenet, cifar, svhn, default)",
                 "red",
             )
         )
