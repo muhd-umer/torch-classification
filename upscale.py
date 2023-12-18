@@ -18,7 +18,6 @@ from utils.defaults import get_network_G_config
 from utils.innfer import (
     color_fix,
     extract_patches_2d,
-    get_images_paths,
     get_models_paths,
     guided_filter,
     linear_resize,
@@ -493,9 +492,6 @@ def main():
     comp = args.comp  # save comparison images
     model_path = args.models
     output_dir = args.output
-    # TODO: chain scales
-    scale = args.scale if args.scale != -1 else None
-    # TODO: chain archs
 
     os.makedirs(output_dir, exist_ok=True)
 

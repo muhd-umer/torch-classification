@@ -9,7 +9,6 @@ import copy
 from collections import OrderedDict
 
 import torch.nn as nn
-from torch import nn
 
 from .blocks import ConvBNAct, MBConv
 
