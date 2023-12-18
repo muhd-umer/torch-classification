@@ -168,7 +168,7 @@ def train(
         trainer = pl.Trainer(
             accelerator=accelerator,
             devices=devices,
-            precision=16,
+            # precision=16,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
@@ -188,7 +188,7 @@ def train(
         trainer = pl.Trainer(
             accelerator=accelerator,
             devices=devices,
-            precision=16,
+            # precision=16,
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=5,
