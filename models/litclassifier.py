@@ -34,10 +34,6 @@ class ImageClassifier(pl.LightningModule):
         optimizer = self.optimizers()
         scheduler = self.lr_schedulers()
 
-        N = 1  # step every N epochs
-        if self.trainer.is_last_batch and (self.trainer.current_epoch + 1) % N == 0:
-            scheduler.step()
-
         def closure():
             loss = self.loss(self(x), y)
             loss.backward()
@@ -49,6 +45,10 @@ class ImageClassifier(pl.LightningModule):
         optimizer.zero_grad()
 
         self.log("train_loss", loss, prog_bar=True)
+
+        N = 1  # step every N epochs
+        if self.trainer.is_last_batch and (self.trainer.current_epoch + 1) % N == 0:
+            scheduler.step()
 
         return loss
 
