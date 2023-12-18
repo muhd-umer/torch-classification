@@ -46,5 +46,7 @@ def get_config():
     cfg.num_epochs = 100
     cfg.lr = 0.0005
     cfg.weight_decay = 0.005
+    cfg.momentum = 0.9
+    cfg.rho = 0.05
 
     return cfg
