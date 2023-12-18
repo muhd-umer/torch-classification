@@ -39,6 +39,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.RandomRotation(degrees=(-30, 30)),
                     v2.ColorJitter(
@@ -57,6 +58,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
@@ -71,6 +73,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.AutoAugment(v2.AutoAugmentPolicy.IMAGENET),
                     v2.ToDtype(torch.float32, scale=True),
@@ -84,6 +87,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
@@ -98,6 +102,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.AutoAugment(v2.AutoAugmentPolicy.CIFAR10),
                     v2.ToDtype(torch.float32, scale=True),
@@ -111,6 +116,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
@@ -125,6 +131,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.AutoAugment(v2.AutoAugmentPolicy.SVHN),
                     v2.ToDtype(torch.float32, scale=True),
@@ -138,6 +145,7 @@ def get_transforms(cfg):
                     v2.Resize(
                         (cfg.img_size, cfg.img_size),
                         interpolation=v2.InterpolationMode.BICUBIC,
+                        antialias=True,
                     ),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
