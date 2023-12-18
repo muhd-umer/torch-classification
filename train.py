@@ -103,6 +103,13 @@ def train(
             cfg.model_name_timm, pretrained=True, num_classes=cfg.num_classes
         )
 
+        # Add modified head
+        model.classifier = nn.Sequential(
+            nn.Linear(model.head.in_features, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, cfg.num_classes),
+        )
+
     elif mode == "train":
         # Create the model
         residual_config = [
@@ -119,6 +126,13 @@ def train(
             act_layer=nn.SiLU,
         )
         efficientnet_v2_init(model)
+
+        model.head = nn.Sequential(
+            nn.Linear(model.head.in_features, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, cfg.num_classes),
+        )
+
     else:
         raise ValueError(
             colored(
