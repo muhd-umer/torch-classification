@@ -13,7 +13,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 import torchmetrics
-from torch import nn, optim
 
 
 class ImageClassifier(pl.LightningModule):

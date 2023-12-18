@@ -11,7 +11,6 @@ from typing import Type
 
 import torch
 import torch.nn as nn
-from torch import nn
 
 
 class SEUnit(nn.Module):
