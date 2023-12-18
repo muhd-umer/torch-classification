@@ -77,7 +77,7 @@ class MBConvConfig:
         layers (int): Number of layers.
         use_se (bool): Whether to use Squeeze-Excitation Unit.
         fused (bool): Whether to use fused convolution.
-        act (nn.Module, optional): Activation function. Defaults to nn.SiLU.
+        act (nn.Module, optional): Activation function. Defaults to nn.Mish.
         norm_layer (nn.Module, optional): Normalization layer. Defaults to nn.BatchNorm2d.
     """
 
@@ -91,7 +91,7 @@ class MBConvConfig:
         layers: int,
         use_se: bool,
         fused: bool,
-        act=nn.SiLU,
+        act=nn.Mish,
         norm_layer=nn.BatchNorm2d,
     ):
         self.expand_ratio = expand_ratio

@@ -40,7 +40,7 @@ class EfficientNetV2(nn.Module):
         dropout=0.2,
         stochastic_depth=0.0,
         block=MBConv,
-        act_layer=nn.SiLU,
+        act_layer=nn.Mish,
         norm_layer=nn.BatchNorm2d,
     ):
         super(EfficientNetV2, self).__init__()

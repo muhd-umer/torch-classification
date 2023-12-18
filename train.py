@@ -116,7 +116,7 @@ def train(
             dropout=0.1,
             stochastic_depth=0.2,
             block=MBConv,
-            act_layer=nn.SiLU,
+            act_layer=nn.Mish,
         )
         efficientnet_v2_init(model)
     else:

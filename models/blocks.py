@@ -24,7 +24,7 @@ class SEUnit(nn.Module):
     Args:
         in_channel (int): Number of input channels.
         reduction_ratio (int, optional): Reduction ratio for the hidden layer size. Defaults to 4.
-        act1 (nn.Module, optional): First activation function. Defaults to nn.SiLU with inplace=True.
+        act1 (nn.Module, optional): First activation function. Defaults to nn.Mish with inplace=True.
         act2 (nn.Module, optional): Second activation function. Defaults to nn.Sigmoid.
     """
 
@@ -32,7 +32,7 @@ class SEUnit(nn.Module):
         self,
         in_channel: int,
         reduction_ratio: int = 4,
-        act1: Type[nn.Module] = partial(nn.SiLU, inplace=True),
+        act1: Type[nn.Module] = partial(nn.Mish, inplace=True),
         act2: Type[nn.Module] = nn.Sigmoid,
     ):
         super(SEUnit, self).__init__()
