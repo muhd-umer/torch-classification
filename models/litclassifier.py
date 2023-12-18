@@ -32,6 +32,11 @@ class ImageClassifier(pl.LightningModule):
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int):
         x, y = batch
         optimizer = self.optimizers()
+        scheduler = self.lr_schedulers()
+
+        N = 1  # step every N epochs
+        if self.trainer.is_last_batch and (self.trainer.current_epoch + 1) % N == 0:
+            scheduler.step()
 
         def closure():
             loss = self.loss(self(x), y)
