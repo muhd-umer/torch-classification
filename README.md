@@ -110,14 +110,15 @@ The project is structured as follows:
 
 ```fish
 torch-classification
-├── data/            # data directory
-├── models/          # model directory
-├── resources/       # resources directory
-├── utils/           # utility directory
-├── LICENSE          # license file
-├── README.md        # readme file
-├── environment.yml  # conda environment file
-└── main.py          # main file
+├── data/             # data directory
+├── models/           # model directory
+├── resources/        # resources directory
+├── utils/            # utility directory
+├── LICENSE           # license file
+├── README.md         # readme file
+├── environment.yml   # conda environment file
+├── upscale.py        # upscaling script
+└── train.py          # training script
 ```
 
 ## Contributing ❤️
