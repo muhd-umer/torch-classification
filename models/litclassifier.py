@@ -16,16 +16,46 @@ import torchmetrics
 
 
 class ImageClassifier(pl.LightningModule):
+    """
+    Image Classifier class that extends PyTorch Lightning Module.
+    """
+
     def __init__(self, model: nn.Module, cfg: dict):
+        """
+        Initialize the ImageClassifier.
+
+        Args:
+            model (nn.Module): The model to use for classification.
+            cfg (dict): Configuration dictionary.
+        """
         super().__init__()
         self.model = model
         self.cfg = cfg
         self.loss = nn.CrossEntropyLoss()
 
     def forward(self, x: torch.Tensor):
+        """
+        Forward pass through the model.
+
+        Args:
+            x (torch.Tensor): Input tensor.
+
+        Returns:
+            Model output tensor.
+        """
         return self.model(x)
 
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int):
+        """
+        Training step for each batch.
+
+        Args:
+            batch (Tuple[torch.Tensor, torch.Tensor]): The current batch of input data and labels.
+            batch_idx (int): The index of the current batch.
+
+        Returns:
+            The loss for this step.
+        """
         x, y = batch
         y_hat = self(x)
         loss = self.loss(y_hat, y)
@@ -35,6 +65,16 @@ class ImageClassifier(pl.LightningModule):
         return loss
 
     def validation_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int):
+        """
+        Validation step for each batch.
+
+        Args:
+            batch (Tuple[torch.Tensor, torch.Tensor]): The current batch of input data and labels.
+            batch_idx (int): The index of the current batch.
+
+        Returns:
+            The loss for this step.
+        """
         x, y = batch
         y_hat = self(x)
         loss = self.loss(y_hat, y)
@@ -50,6 +90,13 @@ class ImageClassifier(pl.LightningModule):
         return loss
 
     def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int):
+        """
+        Test step for each batch.
+
+        Args:
+            batch (Tuple[torch.Tensor, torch.Tensor]): The current batch of input data and labels.
+            batch_idx (int): The index of the current batch.
+        """
         x, y = batch
         y_hat = self(x)
 
@@ -61,6 +108,12 @@ class ImageClassifier(pl.LightningModule):
         self.log("test_acc", acc, prog_bar=True, sync_dist=True)
 
     def configure_optimizers(self):
+        """
+        Configure the optimizers for training.
+
+        Returns:
+            Dictionary containing the optimizer and learning rate scheduler.
+        """
         optimizer = optim.AdamW(self.parameters(), lr=self.cfg.lr)
         scheduler = lr_scheduler.CosineAnnealingLR(
             optimizer, T_max=self.cfg.num_epochs, eta_min=0
