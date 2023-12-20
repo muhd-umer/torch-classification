@@ -38,7 +38,7 @@ To get started with this project, follow the steps below:
 - Activate the newly created environment:
 
     ```fish
-    conda activate aecc
+    conda activate torch-classification
     ```
 
 - Install the PyTorch Ecosystem:
