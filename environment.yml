@@ -24,7 +24,7 @@ dependencies:
           - python-box
           - timm
           - torchinfo
-          - pytorch-lightning
+          - lightning
           - rich
           - wandb
           - rawpy

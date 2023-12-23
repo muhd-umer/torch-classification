@@ -49,7 +49,7 @@ To get started with this project, follow the steps below:
 
     # additional packages (already included in environment.yml)
     pip3 install einops python-box timm torchinfo \
-                 pytorch-lightning rich wandb rawpy
+                 lightning rich wandb rawpy
     ```
 
 ## Dataset
