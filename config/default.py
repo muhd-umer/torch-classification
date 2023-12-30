@@ -26,7 +26,7 @@ def get_config():
     cfg.num_classes = 100
     cfg.val_size = 0.1
     cfg.img_size = 224  # desired image size, not actual image size
-    cfg.transform_set = "default"  # imagenet, cifar10, svhn, default
+    cfg.transform_set = "default"  # imagenet, cifar, svhn, default
 
     # CIFAR-100 Original
     # Mean: tensor([0.5071, 0.4867, 0.4408])
@@ -38,7 +38,9 @@ def get_config():
 
     # Model
     cfg.model_name = "efficientnet_v2_m"
-    cfg.model_name_timm = "efficientnetv2_rw_m"  # must be in timm.list_models()
+    cfg.model_name_timm = (
+        "vit_base_patch16_224.augreg2_in21k_ft_in1k"  # must be in timm.list_models()
+    )
     cfg.pretrained = True
     cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
 
