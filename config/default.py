@@ -39,7 +39,7 @@ def get_config():
     # Model
     cfg.model_name = "efficientnet_v2_m"
     cfg.model_name_timm = (
-        "vit_base_patch16_224.augreg2_in21k_ft_in1k"  # must be in timm.list_models()
+        "tf_efficientnetv2_m.in21k_ft_in1k"  # must be in list of timm models
     )
     cfg.pretrained = True
     cfg.model_dir = os.path.abspath(os.path.join(cfg.root_dir, "weights"))
