@@ -294,8 +294,8 @@ if __name__ == "__main__":
         )
 
     if cfg.dataset_type == "default":
-        cfg.mean = [0.5071, 0.4867, 0.4408]
-        cfg.std = [0.2675, 0.2565, 0.2761]
+        cfg.mean = [0.5071, 0.4865, 0.4409]
+        cfg.std = [0.2673, 0.2564, 0.2762]
     elif cfg.dataset_type == "imagefolder":
         cfg.mean = [0.5081, 0.4843, 0.4414]
         cfg.std = [0.2888, 0.2726, 0.2962]
