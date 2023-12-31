@@ -102,7 +102,7 @@ def train(
             residual_config,
             1280,
             cfg.num_classes,
-            dropout=0.1,
+            dropout=0.0,
             stochastic_depth=0.2,
             block=MBConv,
             act_layer=nn.Mish,
