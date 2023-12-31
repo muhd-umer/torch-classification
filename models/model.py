@@ -77,11 +77,7 @@ class EfficientNetV2(nn.Module):
                     ("dropout", nn.Dropout(p=dropout, inplace=True)),
                     (
                         "classifier",
-                        nn.Sequential(
-                            nn.Linear(out_channels, out_channels // 2),
-                            nn.ReLU(),
-                            nn.Linear(out_channels // 2, num_classes),
-                        )
+                        nn.Linear(out_channels, num_classes)
                         if num_classes
                         else nn.Identity(),
                     ),
