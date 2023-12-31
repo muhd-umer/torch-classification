@@ -91,6 +91,12 @@ def train(
         model = timm.create_model(
             cfg.model_name_timm, pretrained=True, num_classes=cfg.num_classes
         )
+        # model.head = nn.Sequential(
+        #     nn.Linear(model.head.in_features, model.head.in_features // 2),
+        #     nn.ReLU(),
+        #     nn.Linear(model.head.in_features // 2, cfg.num_classes),
+        #     nn.Softmax(dim=-1),
+        # )
 
     elif mode == "train":
         # Create the model
@@ -170,7 +176,7 @@ def train(
                     dirpath=cfg.model_dir,
                     filename=f"{cfg.model_name}_best_model",
                 ),
-                EMACallback(decay=0.999),
+                # EMACallback(decay=0.999),
                 pl_callbacks.EarlyStopping("val_loss", patience=3),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
             ],
@@ -191,7 +197,7 @@ def train(
                     dirpath=cfg.model_dir,
                     filename=f"{cfg.model_name}_best_model",
                 ),
-                EMACallback(decay=0.999),
+                # EMACallback(decay=0.999),
                 pl_callbacks.EarlyStopping("val_loss", patience=3),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
             ],
