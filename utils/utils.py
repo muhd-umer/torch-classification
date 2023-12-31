@@ -104,9 +104,7 @@ def get_transforms(cfg):
                         interpolation=v2.InterpolationMode.BICUBIC,
                         antialias=True,
                     ),
-                    v2.Pad(4, padding_mode="reflect"),
-                    v2.RandomCrop((cfg.img_size, cfg.img_size)),
-                    v2.RandomHorizontalFlip(),
+                    v2.AutoAugment(v2.AutoAugmentPolicy.CIFAR10),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
                 ]
@@ -120,7 +118,6 @@ def get_transforms(cfg):
                         interpolation=v2.InterpolationMode.BICUBIC,
                         antialias=True,
                     ),
-                    v2.CenterCrop((cfg.img_size, cfg.img_size)),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(mean=cfg.mean, std=cfg.std),
                 ]
