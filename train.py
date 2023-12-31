@@ -171,7 +171,6 @@ def train(
                     filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
-                pl_callbacks.EarlyStopping("val_acc", patience=3),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
             ],
         )
@@ -192,7 +191,6 @@ def train(
                     filename=f"{cfg.model_name}_best_model",
                 ),
                 EMACallback(decay=0.999),
-                pl_callbacks.EarlyStopping("val_acc", patience=3),
                 pl_callbacks.LearningRateMonitor(logging_interval="step"),
             ],
         )
