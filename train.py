@@ -102,7 +102,7 @@ def train(
             residual_config,
             1280,
             cfg.num_classes,
-            dropout=0.1,
+            dropout=0.0,
             stochastic_depth=0.2,
             block=MBConv,
             act_layer=nn.Mish,
@@ -137,7 +137,11 @@ def train(
 
     # Load from checkpoint if weights are provided
     if weights is not None:
-        state_dict = torch.load(weights)["state_dict"]
+        state_dict = torch.load(weights)
+        if "model." not in list(state_dict.keys())[0]:
+            state_dict = {
+                f"model.{k}": v for k, v in state_dict.items() if "model." not in k
+            }
         model.load_state_dict(state_dict)
 
     if logger_backend == "wandb":
