@@ -95,7 +95,6 @@ def train(
         #     nn.Linear(model.head.in_features, model.head.in_features // 2),
         #     nn.ReLU(),
         #     nn.Linear(model.head.in_features // 2, cfg.num_classes),
-        #     nn.Softmax(dim=-1),
         # )
 
     elif mode == "train":

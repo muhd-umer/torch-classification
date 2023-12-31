@@ -81,7 +81,6 @@ class EfficientNetV2(nn.Module):
                             nn.Linear(out_channels, out_channels // 2),
                             nn.ReLU(),
                             nn.Linear(out_channels // 2, num_classes),
-                            nn.Softmax(dim=-1),
                         )
                         if num_classes
                         else nn.Identity(),
