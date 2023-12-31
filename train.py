@@ -134,7 +134,6 @@ def train(
         )
 
     model = ImageClassifier(model, cfg)
-    model.load_from_checkpoint
 
     # Load from checkpoint if weights are provided
     if weights is not None:
