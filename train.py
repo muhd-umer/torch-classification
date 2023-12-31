@@ -134,10 +134,13 @@ def train(
         )
 
     model = ImageClassifier(model, cfg)
+    model.load_from_checkpoint
 
     # Load from checkpoint if weights are provided
     if weights is not None:
-        model.load_state_dict(torch.load(weights)["state_dict"])
+        state_dict = torch.load(weights)["state_dict"]
+        state_dict = {k.replace("model.", ""): v for k, v in state_dict.items()}
+        model.load_state_dict(state_dict)
 
     if logger_backend == "wandb":
         logger.watch(model, log="all", log_freq=100)
@@ -325,6 +328,6 @@ if __name__ == "__main__":
         args.rich_progress,
         args.test_only,
         args.resume,
-        args.weights if args.resume or args.test_only else None,
+        args.weights,
         args.logger_backend,
     )
