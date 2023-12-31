@@ -137,7 +137,7 @@ def train(
 
     # Load from checkpoint if weights are provided
     if weights is not None:
-        state_dict = torch.load(weights)
+        state_dict = torch.load(weights)["state_dict"]
         if "model." not in list(state_dict.keys())[0]:
             state_dict = {
                 f"model.{k}": v for k, v in state_dict.items() if "model." not in k
