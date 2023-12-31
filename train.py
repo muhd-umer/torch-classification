@@ -138,7 +138,6 @@ def train(
     # Load from checkpoint if weights are provided
     if weights is not None:
         state_dict = torch.load(weights)["state_dict"]
-        state_dict = {k.replace("model.", ""): v for k, v in state_dict.items()}
         model.load_state_dict(state_dict)
 
     if logger_backend == "wandb":
