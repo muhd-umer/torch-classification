@@ -114,8 +114,10 @@ class ImageClassifier(pl.LightningModule):
         Returns:
             Dictionary containing the optimizer and learning rate scheduler.
         """
-        optimizer = optim.RAdam(self.parameters(), lr=self.cfg.lr, weight_decay=1e-4)
-        scheduler = lr_scheduler.StepLR(
-            optimizer, step_size=self.cfg.num_epochs // 3, gamma=0.1
+        optimizer = optim.AdamW(
+            self.parameters(), lr=self.cfg.lr, weight_decay=self.cfg.weight_decay
+        )
+        scheduler = lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=self.cfg.num_epochs, eta_min=0
         )
         return {"optimizer": optimizer, "lr_scheduler": scheduler}
