@@ -229,3 +229,4 @@ data/cifar-100-python/
 notebooks/lightning_logs/
 logs/
 lr.ipynb
+demo/
