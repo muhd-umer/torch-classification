@@ -4,6 +4,7 @@ Default configuration file for Torch Classification.
 
 import os
 
+import torch
 from box import Box
 
 
@@ -48,5 +49,6 @@ def get_config():
     cfg.weight_decay = 0.005
     cfg.momentum = 0.9
     cfg.rho = 0.05
+    cfg.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     return cfg
