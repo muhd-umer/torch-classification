@@ -89,7 +89,9 @@ def train(
     if mode == "finetune":
         # Create the model
         model = timm.create_model(
-            cfg.model_name_timm, pretrained=True, num_classes=cfg.num_classes
+            cfg.model_name_timm,
+            pretrained=True if weights is None else False,
+            num_classes=cfg.num_classes,
         )
 
     elif mode == "train":
@@ -119,7 +121,8 @@ def train(
     if os.getenv("LOCAL_RANK", "0") == "0":
         yaml_cfg = cfg.to_yaml()
 
-        os.makedirs(cfg.log_dir, exist_ok=True)
+        if not test_mode:
+            os.makedirs(cfg.log_dir, exist_ok=True)
 
         print(colored(f"Config:", "green", attrs=["bold"]))
         print(colored(yaml_cfg))
@@ -166,7 +169,7 @@ def train(
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=2,
-            logger=logger,
+            logger=logger if not test_mode else False,
             callbacks=[
                 # pl_callbacks.RichModelSummary(max_depth=3),
                 pl_callbacks.RichProgressBar(theme=theme),
@@ -186,7 +189,7 @@ def train(
             max_epochs=cfg.num_epochs,
             enable_model_summary=False,
             check_val_every_n_epoch=2,
-            logger=logger,
+            logger=logger if not test_mode else False,
             callbacks=[
                 # pl_callbacks.ModelSummary(max_depth=3),
                 SimplifiedProgressBar(),
