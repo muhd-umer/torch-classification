@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![PyTorch](https://img.shields.io/badge/PyTorch-2.1.1-orange.svg)](https://pytorch.org/) [![CIFAR-100](https://img.shields.io/badge/Dataset-CIFAR--100-green.svg)](https://www.cs.toronto.edu/~kriz/cifar.html)
 
-Torch Classification is a PyTorch-based image classification project that includes the implementation of a convolutional neural network (CNN) for classifying images. The project demonstrates training the model from scratch and utilizing transfer learning with pre-trained weights on the CIFAR-100 dataset. This work was part of a Machine Learning course at <a href="https://nust.edu.pk/">NUST</a>, focusing on practical deep learning applications.
+Torch Classification is a PyTorch-based image classification project showcasing the implementation of the [EfficientNet V2](https://arxiv.org/abs/2104.00298) family to classify images. This project covers training the model from scratch and employing transfer learning with pre-trained weights specifically on the CIFAR-100 dataset. Additionally, it delves into the impact of leveraging GANs (BSRGAN & SwinIR) for image super-resolution on the same CIFAR-100 dataset. This initiative was undertaken as part of a Machine Learning course at <a href="https://nust.edu.pk/">NUST</a>, emphasizing practical applications of deep learning.
 
 ## Installation
 To get started with this project, follow the steps below:
