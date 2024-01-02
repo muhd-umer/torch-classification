@@ -110,7 +110,15 @@ python3 train.py --mode MODE \  # (train, finetune)
                  --logger-backend LOGGER_BACKEND  # (wandb, tensorboard)
 ```
 
-To train the model using transfer learning, replace `train.py` with `finetune.py` in the above commands.
+To evaluate the models, download the appropriate weights from the [Weights & Data](https://github.com/muhd-umer/torch-classification/releases/) section and place them in `weights/` directory. Then, run the following command:
+
+```fish
+bash run.sh
+
+# or
+python3 train.py --weights WEIGHTS --test-only
+```
+
 
 ## Project Structure
 The project is structured as follows:
